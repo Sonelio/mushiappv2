@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import type { User } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
+import type { User } from '@supabase/supabase-js';
 import { useUser } from '@/components/providers/user-provider';
 
 interface UpdateUserData {
@@ -15,9 +15,12 @@ interface UpdateUserData {
 }
 
 export default function AccountPage() {
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const router = useRouter();
-  const { user, refreshUser } = useUser();
+  const { user, loading } = useUser();
   const [formData, setFormData] = useState<UpdateUserData>({
     name: '',
     surname: '',
@@ -41,19 +44,6 @@ export default function AccountPage() {
     }
   }, [user]);
 
-  // Single auth state listener
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!session) {
-        router.push('/login');
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase.auth, router]);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLoading) return; // Prevent double submission
@@ -70,20 +60,14 @@ export default function AccountPage() {
 
       if (error) throw error;
 
-      // Update local state first
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
-      
-      // Then refresh user data
-      await refreshUser();
-      
-      // Reset loading state
-      setIsLoading(false);
     } catch (error) {
       console.error('Profile update error:', error);
       setMessage({ 
         type: 'error', 
         text: error instanceof Error ? error.message : 'Failed to update profile. Please try again.' 
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -158,9 +142,6 @@ export default function AccountPage() {
       // Update local state
       setFormData(prev => ({ ...prev, photoUrl: data.publicUrl }));
       setMessage({ type: 'success', text: 'Photo uploaded successfully!' });
-      
-      // Refresh user data
-      await refreshUser();
     } catch (error) {
       console.error('Complete upload error:', error);
       setMessage({ 
@@ -173,16 +154,28 @@ export default function AccountPage() {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
+    setIsLoading(true);
+    try {
+      await supabase.auth.signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  if (!user) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">Loading...</div>
       </div>
     );
+  }
+
+  if (!user) {
+    router.push('/');
+    return null;
   }
 
   return (
@@ -215,7 +208,7 @@ export default function AccountPage() {
                     xmlns="http://www.w3.org/2000/svg" 
                     className="h-16 w-16" 
                     fill="none" 
-                    viewBox="0 0 24 24" 
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
                     <path 

@@ -1,64 +1,42 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import type { User } from '@supabase/auth-helpers-nextjs';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
+import type { User } from '@supabase/supabase-js';
 
-type UserContextType = {
-  user: User | null;
-  isLoading: boolean;
-  refreshUser: () => Promise<void>;
-};
-
-const UserContext = createContext<UserContextType>({
+const UserContext = createContext<{ user: User | null; loading: boolean }>({
   user: null,
-  isLoading: true,
-  refreshUser: async () => {}
+  loading: true,
 });
 
-export const useUser = () => useContext(UserContext);
-
-export function UserProvider({ children }: { children: ReactNode }) {
+export function UserProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [refreshAttempt, setRefreshAttempt] = useState(0);
-  const supabase = createClientComponentClient();
+  const [loading, setLoading] = useState(true);
 
-  const refreshUser = async () => {
-    console.log('Refreshing user');
-    try {
-      const { data } = await supabase.auth.getUser();
-      console.log('User data fetched:', data);
-      setUser(data.user);
-    } catch (error) {
-      console.error('Error refreshing user:', error);
-    } finally {
-      console.log('Finished refreshing user');
-      setIsLoading(false);
-    }
-  };
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
-  // Initial setup and auth state change listener
   useEffect(() => {
-    const initialFetch = async () => {
-      console.log('Initial user fetch');
-      try {
-        const { data } = await supabase.auth.getUser();
-        console.log('Initial user data:', data);
-        setUser(data.user);
-      } catch (error) {
-        console.error('Error in initial fetch:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
     };
 
-    initialFetch();
+    // Check current user
+    getUser();
 
+    // Listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async () => {
-        console.log('Auth state changed, incrementing refresh attempt');
-        setRefreshAttempt(prev => prev + 1);
+      (event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
       }
     );
 
@@ -67,27 +45,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
     };
   }, [supabase.auth]);
 
-  useEffect(() => {
-    if (refreshAttempt > 0) {
-      console.log('Handling refresh attempt:', refreshAttempt);
-      refreshUser();
-    }
-  }, [refreshAttempt]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isLoading) {
-        console.log('Timeout reached, setting loading to false');
-        setIsLoading(false);
-      }
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, [isLoading]);
-
   return (
-    <UserContext.Provider value={{ user, isLoading, refreshUser }}>
+    <UserContext.Provider value={{ user, loading }}>
       {children}
     </UserContext.Provider>
   );
-} 
+}
+
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+}; 

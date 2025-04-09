@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import type { Route } from 'next';
 import { useUser } from '@/components/providers/user-provider';
-import type { User } from '@supabase/auth-helpers-nextjs';
+import type { User } from '@supabase/supabase-js';
 
 const ProfileImage = ({ user }: { user: User | null }) => {
   const [imageError, setImageError] = useState(false);

@@ -2,14 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
-import type { User } from '@supabase/supabase-js';
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 const UserContext = createContext<{ user: User | null; loading: boolean }>({
   user: null,
   loading: true,
 });
 
-export function UserProvider({
+export default function UserProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ export function UserProvider({
 
     // Listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (event: AuthChangeEvent, session: Session | null) => {
         setUser(session?.user ?? null);
         setLoading(false);
       }

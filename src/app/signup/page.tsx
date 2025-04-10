@@ -71,7 +71,7 @@ export default function SignUpPage() {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat'
     }}>
-      <div className="w-[480px] md:w-[480px] w-[320px] h-[480px] bg-[#17362A] p-8 rounded-[30px] shadow-xl">
+      <div className="w-[340px] md:w-[480px] w-[320px] h-[480px] bg-[#17362A] p-8 rounded-[30px] shadow-xl">
         <div className="text-center mb-0">
           <div className="flex justify-center mb-8">
             <Image

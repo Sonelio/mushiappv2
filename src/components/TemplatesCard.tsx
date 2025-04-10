@@ -85,6 +85,24 @@ export default function TemplatesCard({
 
   return (
     <div className="relative group rounded-[20px] overflow-hidden shadow-lg bg-[#10221B] aspect-square">
+      <style jsx>{`
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .template-button {
+            height: 42px !important;
+            font-size: 16px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+          }
+          .save-button {
+            height: 38px !important;
+            width: 38px !important;
+          }
+          .save-icon {
+            width: 14px !important;
+            height: 14px !important;
+          }
+        }
+      `}</style>
       <div className="template-card-content relative w-full h-full overflow-hidden cursor-pointer" onClick={handleClick}>
         {!imageError && imageUrl ? (
           <>
@@ -122,7 +140,7 @@ export default function TemplatesCard({
               <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={handleCanvaClick}
-                  className="bg-[#10221B] text-white px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 rounded-[15px] text-[14px] sm:text-[16px] lg:text-[20px] font-semibold hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[40px] sm:h-[45px] lg:h-[50px] whitespace-nowrap"
+                  className="template-button bg-[#10221B] text-white px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 rounded-[15px] text-[14px] sm:text-[16px] lg:text-[20px] font-semibold hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[40px] sm:h-[45px] lg:h-[50px] whitespace-nowrap"
                 >
                   Open in Canva
                 </button>
@@ -136,12 +154,12 @@ export default function TemplatesCard({
                         setIsClicked(false);
                       }
                     }}
-                    className="bg-[#10221B] text-white rounded-[15px] hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[40px] sm:h-[45px] lg:h-[50px] w-[40px] sm:w-[45px] lg:w-[50px] flex items-center justify-center"
+                    className="save-button bg-[#10221B] text-white rounded-[15px] hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[40px] sm:h-[45px] lg:h-[50px] w-[40px] sm:w-[45px] lg:w-[50px] flex items-center justify-center"
                   >
                     <img
                       src={isSaved ? "/icons/hover-icon-scs.png" : "/icons/hover-icon.png"}
                       alt={isSaved ? "Saved" : "Save"}
-                      className="w-4 h-4"
+                      className="save-icon w-4 h-4"
                     />
                   </button>
                 )}

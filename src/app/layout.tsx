@@ -13,8 +13,21 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Mushi Templates",
+  title: "MUSHI: Static Templates",
   description: "Your go-to platform for beautiful templates",
+  icons: {
+    icon: [
+      {
+        url: '/favicon.png',
+        type: 'image/svg+xml',
+      },
+      {
+        url: '/favicon.png',
+        sizes: 'any',
+      },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 // Force dynamic rendering to ensure session state is always fresh

@@ -261,7 +261,12 @@ export default function FilterBar({
                 alt="Filter icon"
                 className="w-4 h-4 object-contain"
                 aria-hidden="true"
-                style={{marginLeft: "8px", flexShrink: 0}}
+                style={{
+                  marginLeft: "8px",
+                  flexShrink: 0,
+                  imageRendering: 'auto',
+                  shapeRendering: 'geometricPrecision'
+                }}
               />
             </button>
             
@@ -297,6 +302,10 @@ export default function FilterBar({
                         src={selectedIndustry.includes(industry) ? "/icons/filter-bar2.svg" : "/icons/filter-bar3.svg"}
                         alt=""
                         className="w-4 h-4 object-contain"
+                        style={{ 
+                          imageRendering: 'auto',
+                          shapeRendering: 'geometricPrecision'
+                        }}
                         aria-hidden="true"
                       />
                     </div>
@@ -332,7 +341,12 @@ export default function FilterBar({
                 alt="Filter icon"
                 className="w-4 h-4 object-contain"
                 aria-hidden="true"
-                style={{marginLeft: "8px", flexShrink: 0}}
+                style={{
+                  marginLeft: "8px",
+                  flexShrink: 0,
+                  imageRendering: 'auto',
+                  shapeRendering: 'geometricPrecision'
+                }}
               />
             </button>
             
@@ -368,6 +382,10 @@ export default function FilterBar({
                         src={selectedFormat.includes(format) ? "/icons/filter-bar2.svg" : "/icons/filter-bar3.svg"}
                         alt=""
                         className="w-4 h-4 object-contain"
+                        style={{ 
+                          imageRendering: 'auto',
+                          shapeRendering: 'geometricPrecision'
+                        }}
                         aria-hidden="true"
                       />
                     </div>
@@ -403,7 +421,12 @@ export default function FilterBar({
                 alt="Filter icon"
                 className="w-4 h-4 object-contain"
                 aria-hidden="true"
-                style={{marginLeft: "8px", flexShrink: 0}}
+                style={{
+                  marginLeft: "8px",
+                  flexShrink: 0,
+                  imageRendering: 'auto',
+                  shapeRendering: 'geometricPrecision'
+                }}
               />
             </button>
             
@@ -439,6 +462,10 @@ export default function FilterBar({
                         src={selectedLanguage.includes(language) ? "/icons/filter-bar2.svg" : "/icons/filter-bar3.svg"}
                         alt=""
                         className="w-4 h-4 object-contain"
+                        style={{ 
+                          imageRendering: 'auto',
+                          shapeRendering: 'geometricPrecision'
+                        }}
                         aria-hidden="true"
                       />
                     </div>
@@ -482,7 +509,10 @@ export default function FilterBar({
                   src="/icons/filter-bar1.svg"
                   alt="Sort icon"
                   className="w-4 h-4 object-contain"
-                  aria-hidden="true"
+                  style={{ 
+                    imageRendering: 'auto',
+                    shapeRendering: 'geometricPrecision'
+                  }}
                 />
               </button>
               {sortOpen && (

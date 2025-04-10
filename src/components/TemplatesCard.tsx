@@ -122,7 +122,7 @@ export default function TemplatesCard({
               <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={handleCanvaClick}
-                  className="bg-[#10221B] text-white px-4 sm:px-6 py-2 rounded-[15px] text-[14px] sm:text-[16px] lg:text-[20px] font-semibold hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[50px] whitespace-nowrap"
+                  className="bg-[#10221B] text-white px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 rounded-[15px] text-[14px] sm:text-[16px] lg:text-[20px] font-semibold hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[40px] sm:h-[45px] lg:h-[50px] whitespace-nowrap"
                 >
                   Open in Canva
                 </button>
@@ -136,7 +136,7 @@ export default function TemplatesCard({
                         setIsClicked(false);
                       }
                     }}
-                    className="bg-[#10221B] text-white rounded-[15px] hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[50px] w-[50px] flex items-center justify-center"
+                    className="bg-[#10221B] text-white rounded-[15px] hover:bg-[#10221B]/80 transition-colors cursor-pointer h-[40px] sm:h-[45px] lg:h-[50px] w-[40px] sm:w-[45px] lg:w-[50px] flex items-center justify-center"
                   >
                     <img
                       src={isSaved ? "/icons/hover-icon-scs.png" : "/icons/hover-icon.png"}

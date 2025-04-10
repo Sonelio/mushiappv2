@@ -300,9 +300,19 @@ export default function TemplatesPage() {
   return (
     <div className="min-h-screen flex flex-col text-white relative pt-6" style={{ background: "#000000" }}>
       <style jsx>{`
-        @media (min-width: 1280px) and (max-width: 1440px) {
+        @media (min-width: 1600px) {
           .template-grid {
             grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+          }
+        }
+        @media (min-width: 1280px) and (max-width: 1599px) {
+          .template-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+          }
+        }
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .template-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
           }
         }
       `}</style>
@@ -325,7 +335,7 @@ export default function TemplatesPage() {
           </div>
         ) : (
           <>
-            <div className="template-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-6">
+            <div className="template-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {visibleTemplates.map((template) => (
                 <TemplatesCard
                   key={template.id}

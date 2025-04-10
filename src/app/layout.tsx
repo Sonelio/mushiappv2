@@ -14,7 +14,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "MUSHI: Static Templates",
-  description: "Your go-to platform for beautiful templates",
+  description: "Your go-to platform for high-converting templates",
   icons: {
     icon: [
       {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
         sizes: 'any',
       },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: '/favicon.png',
   },
 };
 

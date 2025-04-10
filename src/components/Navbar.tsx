@@ -76,8 +76,6 @@ export default function Navbar() {
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   
-  const isCoursesActive = pathname === '/courses';
-  const isAgencyActive = pathname === '/agency';
   const isTemplatesActive = pathname === '/templates';
 
   // Handle clicks outside menu
@@ -144,28 +142,12 @@ export default function Navbar() {
               {/* Main Navigation - Desktop */}
               <div className="hidden md:flex items-center space-x-4">
                 <Link
-                  href={"/agency" as Route}
-                  className={`text-white text-[20px] font-semibold tracking-wide px-6 py-4 rounded-md transition-colors ${
-                    isAgencyActive ? 'bg-[#0C1813]' : 'hover:bg-[#0C1813]'
-                  }`}
-                >
-                  AGENCY
-                </Link>
-                <Link
                   href={"/templates" as Route}
-                  className={`text-white text-[20px] font-semibold tracking-wide px-6 py-4 rounded-md transition-colors ${
+                  className={`text-white text-[20px] font-bold tracking-wide px-6 py-4 rounded-md transition-colors ${
                     isTemplatesActive ? 'bg-[#0C1813]' : 'hover:bg-[#0C1813]'
                   }`}
                 >
                   TEMPLATES
-                </Link>
-                <Link
-                  href={"/courses" as Route}
-                  className={`text-white text-[20px] font-semibold tracking-wide px-6 py-4 rounded-md transition-colors ${
-                    isCoursesActive ? 'bg-[#0C1813]' : 'hover:bg-[#0C1813]'
-                  }`}
-                >
-                  COURSES
                 </Link>
               </div>
 
@@ -200,34 +182,14 @@ export default function Navbar() {
               <div className="bg-[#11231C] overflow-hidden" style={{ borderRadius: "15px" }}>
                 <div style={{ padding: "8px 4px 12px 4px" }}>
                   <Link
-                    href={"/agency" as Route}
-                    className={`block text-white text-[20px] font-semibold tracking-wide rounded-md transition-colors text-center ${
-                      isAgencyActive ? 'bg-[#0C1813]' : 'hover:bg-[#0C1813]'
-                    }`}
-                    style={{ width: '150px', margin: '6px auto', padding: '8px 1px' }}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    AGENCY
-                  </Link>
-                  <Link
                     href={"/templates" as Route}
-                    className={`block text-white text-[20px] font-semibold tracking-wide rounded-md transition-colors text-center ${
+                    className={`block text-white text-[20px] font-bold tracking-wide rounded-md transition-colors text-center ${
                       isTemplatesActive ? 'bg-[#0C1813]' : 'hover:bg-[#0C1813]'
                     }`}
                     style={{ width: '150px', margin: '6px auto', padding: '8px 1px' }}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     TEMPLATES
-                  </Link>
-                  <Link
-                    href={"/courses" as Route}
-                    className={`block text-white text-[20px] font-semibold tracking-wide rounded-md transition-colors text-center ${
-                      isCoursesActive ? 'bg-[#0C1813]' : 'hover:bg-[#0C1813]'
-                    }`}
-                    style={{ width: '150px', margin: '6px auto', padding: '8px 1px' }}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    COURSES
                   </Link>
                 </div>
               </div>

@@ -257,7 +257,7 @@ export default function FilterBar({
                 <span className="uppercase text-xl font-semibold">Industry</span>
               </div>
               <img 
-                src="/icons/filter-bar-1.png"
+                src="/icons/filter-bar1.svg"
                 alt="Filter icon"
                 className="w-4 h-4 object-contain"
                 aria-hidden="true"
@@ -294,7 +294,7 @@ export default function FilterBar({
                     >
                       <span>{industry}</span>
                       <img 
-                        src={selectedIndustry.includes(industry) ? "/icons/filter-bar-2.png" : "/icons/filter-bar-3.png"}
+                        src={selectedIndustry.includes(industry) ? "/icons/filter-bar2.svg" : "/icons/filter-bar3.svg"}
                         alt=""
                         className="w-4 h-4 object-contain"
                         aria-hidden="true"
@@ -328,7 +328,7 @@ export default function FilterBar({
                 <span className="uppercase text-xl font-semibold">Format</span>
               </div>
               <img 
-                src="/icons/filter-bar-1.png"
+                src="/icons/filter-bar1.svg"
                 alt="Filter icon"
                 className="w-4 h-4 object-contain"
                 aria-hidden="true"
@@ -365,7 +365,7 @@ export default function FilterBar({
                     >
                       <span>{format}</span>
                       <img 
-                        src={selectedFormat.includes(format) ? "/icons/filter-bar-2.png" : "/icons/filter-bar-3.png"}
+                        src={selectedFormat.includes(format) ? "/icons/filter-bar2.svg" : "/icons/filter-bar3.svg"}
                         alt=""
                         className="w-4 h-4 object-contain"
                         aria-hidden="true"
@@ -399,7 +399,7 @@ export default function FilterBar({
                 <span className="uppercase text-xl font-semibold">Language</span>
               </div>
               <img 
-                src="/icons/filter-bar-1.png"
+                src="/icons/filter-bar1.svg"
                 alt="Filter icon"
                 className="w-4 h-4 object-contain"
                 aria-hidden="true"
@@ -436,7 +436,7 @@ export default function FilterBar({
                     >
                       <span>{language}</span>
                       <img 
-                        src={selectedLanguage.includes(language) ? "/icons/filter-bar-2.png" : "/icons/filter-bar-3.png"}
+                        src={selectedLanguage.includes(language) ? "/icons/filter-bar2.svg" : "/icons/filter-bar3.svg"}
                         alt=""
                         className="w-4 h-4 object-contain"
                         aria-hidden="true"
@@ -479,7 +479,7 @@ export default function FilterBar({
               >
                 <span className="uppercase text-[20px] font-semibold">Sort</span>
                 <img 
-                  src="/icons/filter-bar-1.png"
+                  src="/icons/filter-bar1.svg"
                   alt="Sort icon"
                   className="w-4 h-4 object-contain"
                   aria-hidden="true"
@@ -526,9 +526,13 @@ export default function FilterBar({
           >
             <div className="flex items-center gap-2">
               <img
-                src="/icons/supporticon.png"
+                src="/icons/support-icon.svg"
                 alt="Support icon"
-                className="w-6 h-6 object-contain"
+                className="w-5 h-5 object-contain"
+                style={{ 
+                  imageRendering: 'auto',
+                  shapeRendering: 'geometricPrecision'
+                }}
               />
               <span className="uppercase text-xl font-semibold">Support</span>
             </div>

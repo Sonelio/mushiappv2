@@ -66,7 +66,7 @@ export default function HomePage() {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat'
     }}>
-      <div className="w-[480px] md:w-[480px] w-[320px] min-h-[480px] bg-[#17362A] p-8 rounded-[30px] shadow-xl flex flex-col">
+      <div className="w-[300px] sm:w-[320px] md:w-[480px] min-h-[480px] bg-[#17362A] p-8 rounded-[30px] shadow-xl flex flex-col">
         <div className="text-center mb-0">
           <div className="flex justify-center mb-8">
             <Image

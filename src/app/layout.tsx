@@ -16,17 +16,17 @@ export const metadata: Metadata = {
   title: "MUSHI: Static Templates",
   description: "Your go-to platform for high-converting templates",
   icons: {
-    icon: [
-      {
-        url: '/favicon.png',
-        type: 'image/png',
-      },
-      {
-        url: '/favicon.png',
-        sizes: 'any',
-      },
-    ],
-    apple: '/favicon.png',
+    icon: {
+      url: '/favicon.png',
+      type: 'image/png',
+      sizes: '32x32',
+    },
+    shortcut: '/favicon.png',
+    apple: {
+      url: '/favicon.png',
+      type: 'image/png',
+      sizes: '180x180',
+    },
   },
 };
 
@@ -41,6 +41,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+      </head>
       <body className={`${poppins.variable} font-poppins antialiased min-h-screen`}>
         <ThemeProvider
           attribute="class"

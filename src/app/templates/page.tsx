@@ -147,8 +147,8 @@ export default function TemplatesPage() {
           }
         }
         
-        // Sync with DB only if we have a session
-        if (session?.user && isMounted) {
+        // Initial DB sync only if localStorage is empty
+        if (session?.user && isMounted && userSavedTemplates.length === 0) {
           try {
             const { data: userData } = await supabase
               .from('users')
@@ -156,21 +156,12 @@ export default function TemplatesPage() {
               .eq('id', session.user.id)
               .single();
 
-            // Only update DB if localStorage has templates
-            if (userSavedTemplates.length > 0) {
-              console.log("Syncing localStorage templates to DB:", userSavedTemplates);
-              await supabase
-                .from('users')
-                .update({ savedTemplates: userSavedTemplates })
-                .eq('id', session.user.id);
-            }
-            // If localStorage is empty but DB has templates, use DB data
-            else if (userData?.savedTemplates && Array.isArray(userData.savedTemplates) && userData.savedTemplates.length > 0) {
-              console.log("Using DB templates as localStorage is empty:", userData.savedTemplates);
+            if (userData?.savedTemplates && Array.isArray(userData.savedTemplates) && userData.savedTemplates.length > 0) {
+              console.log("Initial load: Using DB templates as localStorage is empty:", userData.savedTemplates);
               setUserSavedTemplates(userData.savedTemplates);
             }
           } catch (error) {
-            console.error('Error syncing with DB:', error);
+            console.error('Error in initial DB sync:', error);
           }
         }
       } catch (error) {
@@ -187,7 +178,7 @@ export default function TemplatesPage() {
     return () => {
       isMounted = false;
     };
-  }, [router, supabase, savedTemplatesLoaded, userSavedTemplates]);
+  }, [router, supabase, savedTemplatesLoaded]); // Removed userSavedTemplates from dependencies
 
   // Toggle save template function
   const toggleSaveTemplate = async (templateId: string) => {

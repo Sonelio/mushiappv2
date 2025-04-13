@@ -32,6 +32,12 @@ export default function TemplatesPage() {
   const [visibleCount, setVisibleCount] = useState(20);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Reset visibleCount when filters change
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [selectedIndustry, selectedFormat, selectedLanguage, sortOption]);
+
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!

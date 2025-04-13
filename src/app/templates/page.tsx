@@ -19,6 +19,11 @@ interface Template {
   createdAt: string;
 }
 
+interface UserData {
+  id: string;
+  savedTemplates: string[];
+}
+
 export default function TemplatesPage() {
   const router = useRouter();
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -29,95 +34,92 @@ export default function TemplatesPage() {
   const [selectedLanguage, setSelectedLanguage] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState("popular");
   const [userSavedTemplates, setUserSavedTemplates] = useState<string[]>([]);
+  const [savedTemplatesLoaded, setSavedTemplatesLoaded] = useState(false);
   const [visibleCount, setVisibleCount] = useState(20);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const supabase = useRef(createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )).current;
 
   // Reset visibleCount when filters change
   useEffect(() => {
     setVisibleCount(20);
   }, [selectedIndustry, selectedFormat, selectedLanguage, sortOption]);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
-  // Check authentication on mount
+  // Load saved templates from localStorage first
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session) {
-        router.push('/login');
+    try {
+      console.log("Loading from localStorage on mount");
+      const savedFromStorage = localStorage.getItem('userSavedTemplates');
+      if (savedFromStorage) {
+        console.log("Found saved templates in localStorage:", savedFromStorage);
+        const parsed = JSON.parse(savedFromStorage);
+        if (Array.isArray(parsed)) {
+          console.log("Setting userSavedTemplates from localStorage:", parsed);
+          setUserSavedTemplates(parsed);
+        }
+      } else {
+        console.log("No saved templates found in localStorage");
+      }
+    } catch (error) {
+      console.error('Error loading from localStorage:', error);
+    } finally {
+      setSavedTemplatesLoaded(true);
+    }
+  }, []); // Only run on mount
+
+  // Save to localStorage when templates change
+  useEffect(() => {
+    if (userSavedTemplates.length > 0) {
+      console.log("Saving to localStorage:", userSavedTemplates);
+      localStorage.setItem('userSavedTemplates', JSON.stringify(userSavedTemplates));
+    }
+  }, [userSavedTemplates]);
+
+  // Main data loading effect - only runs after localStorage is loaded
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadData = async () => {
+      if (!savedTemplatesLoaded) {
+        console.log("Waiting for saved templates to load from localStorage");
         return;
       }
-    };
-    
-    checkAuth();
-  }, [router, supabase.auth]);
 
-  // Fetch templates and user's saved templates
-  useEffect(() => {
-    async function fetchData() {
       try {
         setIsLoading(true);
         
-        // Get user session
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
+        // Check authentication
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !session) {
           router.push('/login');
           return;
         }
-        
+
         // Fetch templates
         const { data: templatesData, error: templatesError } = await supabase
           .from('templates')
-          .select('*');
+          .select('*')
+          .order('savedCount', { ascending: false });
 
         if (templatesError) {
-          setError(templatesError.message);
-          throw templatesError;
+          throw new Error(templatesError.message);
         }
 
-        if (!templatesData) {
-          setTemplates([]);
-          return;
-        }
+        // Transform templates
+        if (templatesData && isMounted) {
+          const transformedTemplates = await Promise.all(templatesData.map(async template => {
+            if (!template.imageUrl) {
+              return { ...template, imageUrl: '/mushi-logo.png' };
+            }
 
-        // Fetch user's saved templates
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('savedTemplates')
-          .eq('id', session.user.id)
-          .single();
+            if (template.imageUrl.startsWith('http')) {
+              return template;
+            }
 
-        if (userError) {
-          // If user doesn't exist, create a new user record
-          const { error: insertError } = await supabase
-            .from('users')
-            .insert([{ 
-              id: session.user.id,
-              savedTemplates: [] 
-            }]);
-            
-          if (insertError) {
-            console.error('Error creating user:', insertError);
-          }
-          setUserSavedTemplates([]);
-        } else {
-          setUserSavedTemplates(userData.savedTemplates || []);
-        }
-
-        // Transform the templates to get public URLs for images
-        const transformedTemplates = await Promise.all(templatesData.map(async template => {
-          if (template.imageUrl) {
             try {
-              if (template.imageUrl.startsWith('http')) {
-                return template;
-              }
-
               let fileName = template.imageUrl;
               if (fileName.startsWith('templates/')) {
                 fileName = fileName.substring('templates/'.length);
@@ -130,30 +132,126 @@ export default function TemplatesPage() {
                 .from('templates')
                 .getPublicUrl(fileName);
 
-              if (urlData?.publicUrl) {
-                template.imageUrl = urlData.publicUrl;
-              } else {
-                template.imageUrl = '/mushi-logo.png';
-              }
+              return {
+                ...template,
+                imageUrl: urlData?.publicUrl || '/mushi-logo.png'
+              };
             } catch (error) {
-              template.imageUrl = '/mushi-logo.png';
+              return { ...template, imageUrl: '/mushi-logo.png' };
             }
-          } else {
-            template.imageUrl = '/mushi-logo.png';
+          }));
+
+          if (isMounted) {
+            setTemplates(transformedTemplates);
+            setIsLoading(false);
           }
-          return template;
-        }));
+        }
+        
+        // Sync with DB only if we have a session
+        if (session?.user && isMounted) {
+          try {
+            const { data: userData } = await supabase
+              .from('users')
+              .select('savedTemplates')
+              .eq('id', session.user.id)
+              .single();
 
-        setTemplates(transformedTemplates);
+            // Only update DB if localStorage has templates
+            if (userSavedTemplates.length > 0) {
+              console.log("Syncing localStorage templates to DB:", userSavedTemplates);
+              await supabase
+                .from('users')
+                .update({ savedTemplates: userSavedTemplates })
+                .eq('id', session.user.id);
+            }
+            // If localStorage is empty but DB has templates, use DB data
+            else if (userData?.savedTemplates && Array.isArray(userData.savedTemplates) && userData.savedTemplates.length > 0) {
+              console.log("Using DB templates as localStorage is empty:", userData.savedTemplates);
+              setUserSavedTemplates(userData.savedTemplates);
+            }
+          } catch (error) {
+            console.error('Error syncing with DB:', error);
+          }
+        }
       } catch (error) {
-        setError(error instanceof Error ? error.message : 'An error occurred while fetching data');
-      } finally {
-        setIsLoading(false);
+        console.error('Error loading data:', error);
+        if (isMounted) {
+          setError('Failed to load data. Please try refreshing the page.');
+          setIsLoading(false);
+        }
       }
-    }
+    };
+    
+    loadData();
 
-    fetchData();
-  }, [supabase, router]);
+    return () => {
+      isMounted = false;
+    };
+  }, [router, supabase, savedTemplatesLoaded, userSavedTemplates]);
+
+  // Toggle save template function
+  const toggleSaveTemplate = async (templateId: string) => {
+    try {
+      console.log("Toggle save template:", templateId);
+      const isSaved = userSavedTemplates.includes(templateId);
+      console.log("Currently saved:", isSaved);
+      
+      // Update local state immediately
+      const updatedSavedTemplates = isSaved
+        ? userSavedTemplates.filter(id => id !== templateId)
+        : [...userSavedTemplates, templateId];
+      
+      console.log("New saved templates:", updatedSavedTemplates);
+      setUserSavedTemplates(updatedSavedTemplates);
+      
+      // Database update happens in the useEffect
+      
+      // Update template savedCount in local state
+      const template = templates.find(t => t.id === templateId);
+      if (template) {
+        const newSavedCount = Math.max(0, (template.savedCount || 0) + (isSaved ? -1 : 1));
+        setTemplates(templates.map(t => 
+          t.id === templateId 
+            ? { ...t, savedCount: newSavedCount }
+            : t
+        ));
+      }
+      
+      // Also try to update the database if we're logged in
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const userId = session.user.id;
+        
+        // Try to update or create user
+        try {
+          const { error } = await supabase
+            .from('users')
+            .upsert({ 
+              id: userId,
+              savedTemplates: updatedSavedTemplates 
+            });
+            
+          if (error) throw error;
+          
+          // Update template savedCount in database
+          if (template) {
+            const newSavedCount = Math.max(0, (template.savedCount || 0) + (isSaved ? -1 : 1));
+            await supabase
+              .from('templates')
+              .update({ savedCount: newSavedCount })
+              .eq('id', templateId);
+          }
+        } catch (dbError) {
+          console.error('Database update failed, but local storage is updated:', dbError);
+        }
+      }
+      
+      setError(null);
+    } catch (error) {
+      console.error('Error in toggleSaveTemplate:', error);
+      setError('Failed to update save status, but we saved locally.');
+    }
+  };
 
   // Filter and sort templates
   const filteredAndSortedTemplates = templates.filter(template => {
@@ -211,110 +309,6 @@ export default function TemplatesPage() {
   // Get visible templates
   const visibleTemplates = filteredAndSortedTemplates.slice(0, visibleCount);
   const hasMore = visibleCount < filteredAndSortedTemplates.length;
-
-  // Toggle save template function
-  const toggleSaveTemplate = async (templateId: string) => {
-    try {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-        setError("Authentication error. Please log in again.");
-        return;
-      }
-      
-      if (!sessionData.session?.user) {
-        setError('Please log in to save templates');
-        return;
-      }
-
-      const userId = sessionData.session.user.id;
-      const isSaved = userSavedTemplates.includes(templateId);
-      
-      // Update user's saved templates locally first
-      const updatedSavedTemplates = isSaved
-        ? userSavedTemplates.filter(id => id !== templateId)
-        : [...userSavedTemplates, templateId];
-      
-      // Directly update local state
-      setUserSavedTemplates(updatedSavedTemplates);
-      
-      // Update local template display 
-      setTemplates(templates.map(t => 
-        t.id === templateId 
-          ? { ...t, savedCount: Math.max(0, (t.savedCount || 0) + (isSaved ? -1 : 1)) }
-          : t
-      ));
-      
-      // Now try to persist the changes to the database
-      try {
-        // First attempt to update the user's savedTemplates
-        const { data: userData, error: userFetchError } = await supabase
-          .from('users')
-          .select('id, savedTemplates')
-          .eq('id', userId)
-          .single();
-          
-        if (userFetchError) {
-          // User doesn't exist, try to create new user
-          const { error: insertError } = await supabase
-            .from('users')
-            .insert([{ 
-              id: userId,
-              savedTemplates: updatedSavedTemplates 
-            }]);
-            
-          if (insertError) {
-            throw new Error(`Failed to create user record: ${insertError.message}`);
-          }
-        } else {
-          // User exists, update savedTemplates
-          const { error: updateError } = await supabase
-            .from('users')
-            .update({ savedTemplates: updatedSavedTemplates })
-            .eq('id', userId);
-            
-          if (updateError) {
-            throw new Error(`Failed to update user's saved templates: ${updateError.message}`);
-          }
-        }
-        
-        // Now try to update the template's savedCount
-        const template = templates.find(t => t.id === templateId);
-        if (!template) {
-          throw new Error(`Template ${templateId} not found`);
-        }
-        
-        const newSavedCount = Math.max(0, (template.savedCount || 0) + (isSaved ? -1 : 1));
-        
-        // Update template savedCount
-        const { error: templateError } = await supabase
-          .from('templates')
-          .update({ savedCount: newSavedCount })
-          .eq('id', templateId);
-          
-        if (templateError) {
-          console.warn(`Note: Failed to update template savedCount: ${templateError.message}`);
-        }
-        
-        // Clear any existing error
-        setError(null);
-      } catch (error) {
-        console.error('Error in toggleSaveTemplate:', error);
-        setError('Failed to update save status. Please try again.');
-        
-        // Revert local state changes on error
-        setUserSavedTemplates(userSavedTemplates);
-        setTemplates(templates);
-      }
-    } catch (mainError) {
-      console.error('Error in toggleSaveTemplate:', mainError);
-      setError('Failed to update save status. Please try again.');
-      
-      // Revert local state changes on error
-      setUserSavedTemplates(userSavedTemplates);
-      setTemplates(templates);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col text-white relative pt-6" style={{ background: "#000000" }}>

@@ -93,8 +93,21 @@ export default function TemplatesPage() {
           .eq('id', session.user.id)
           .single();
 
-        if (!userError && userData?.savedTemplates) {
-          setUserSavedTemplates(userData.savedTemplates);
+        if (userError) {
+          // If user doesn't exist, create a new user record
+          const { error: insertError } = await supabase
+            .from('users')
+            .insert([{ 
+              id: session.user.id,
+              savedTemplates: [] 
+            }]);
+            
+          if (insertError) {
+            console.error('Error creating user:', insertError);
+          }
+          setUserSavedTemplates([]);
+        } else {
+          setUserSavedTemplates(userData.savedTemplates || []);
         }
 
         // Transform the templates to get public URLs for images

@@ -105,7 +105,7 @@ export default function FilterBar({
           <button
             ref={filterButtonRef}
             onClick={() => setFilterOpen(!filterOpen)}
-            className="bg-[#11231C] text-white w-[280px] h-[60px] rounded-lg flex items-center justify-end pr-6 relative"
+            className="bg-[#181818] text-white w-[280px] h-[60px] rounded-lg flex items-center justify-end pr-6 relative"
           >
             <img 
               src={filterOpen ? "/icons/mobile-filter2.png" : "/icons/mobile-filter1.png"}
@@ -119,7 +119,7 @@ export default function FilterBar({
 
           <button
             onClick={() => window.open('mailto:support@example.com')}
-            className="bg-[#11231C] text-white w-[64px] h-[60px] rounded-lg flex items-center justify-center"
+            className="bg-[#181818] text-white w-[64px] h-[60px] rounded-lg flex items-center justify-center"
           >
             <img
               src="/icons/mobile-support1.png"
@@ -132,7 +132,7 @@ export default function FilterBar({
         {/* MOBILE FILTER PANEL */}
         <div 
           ref={filterPanelRef}
-          className={`md:hidden absolute bottom-full left-0 right-0 bg-[#11231C] z-30 transition-all duration-300 shadow-lg rounded-xl mx-4 ${
+          className={`md:hidden absolute bottom-full left-0 right-0 bg-[#181818] z-30 transition-all duration-300 shadow-lg rounded-xl mx-4 ${
             filterOpen ? 'opacity-100 translate-y-0 mb-4' : 'opacity-0 translate-y-1/4 pointer-events-none'
           }`}
           style={{ maxHeight: "80vh" }}
@@ -239,7 +239,7 @@ export default function FilterBar({
           <div className="relative">
             <button
               onClick={() => setDesktopFilterOpen(prev => prev === 'industry' ? null : 'industry')}
-              className="bg-[#10221B] text-white rounded-lg flex items-center"
+              className="bg-[#181818] text-white rounded-lg flex items-center"
               aria-expanded={desktopFilterOpen === 'industry'}
               aria-controls="industry-dropdown"
               style={{
@@ -274,7 +274,7 @@ export default function FilterBar({
               <div className="filter-dropdown" style={{ width: "155px", position: "absolute", bottom: "100%", left: 0 }}>
                 <div 
                   id="industry-dropdown"
-                  className="w-full mb-2 bg-[#10221B] text-white rounded-lg shadow-lg z-30 overflow-hidden"
+                  className="w-full mb-2 bg-[#181818] text-white rounded-lg shadow-lg z-30 overflow-hidden"
                   role="dialog"
                   aria-label="Industry options"
                   onClick={(e) => e.stopPropagation()}
@@ -286,7 +286,7 @@ export default function FilterBar({
                       className={`cursor-pointer text-xl font-semibold text-left uppercase flex items-center justify-between ${
                         selectedIndustry.includes(industry)
                           ? "text-white"
-                          : "text-gray-300 md:hover:bg-[#1a3429] md:hover:text-white"
+                          : "text-gray-300 md:hover:bg-[#181818] md:hover:text-white"
                       }`}
                       style={{
                         display: "flex", 
@@ -319,7 +319,7 @@ export default function FilterBar({
           <div className="relative">
             <button
               onClick={() => setDesktopFilterOpen(prev => prev === 'format' ? null : 'format')}
-              className="bg-[#10221B] text-white rounded-lg flex items-center"
+              className="bg-[#181818] text-white rounded-lg flex items-center"
               aria-expanded={desktopFilterOpen === 'format'}
               aria-controls="format-dropdown"
               style={{
@@ -354,7 +354,7 @@ export default function FilterBar({
               <div className="filter-dropdown" style={{ width: "140px", position: "absolute", bottom: "100%", left: 0 }}>
                 <div 
                   id="format-dropdown"
-                  className="w-full mb-2 bg-[#10221B] text-white rounded-lg shadow-lg z-30 overflow-hidden"
+                  className="w-full mb-2 bg-[#181818] text-white rounded-lg shadow-lg z-30 overflow-hidden"
                   role="dialog"
                   aria-label="Format options"
                   onClick={(e) => e.stopPropagation()}
@@ -366,7 +366,7 @@ export default function FilterBar({
                       className={`cursor-pointer text-xl font-semibold text-left uppercase flex items-center justify-between ${
                         selectedFormat.includes(format)
                           ? "text-white"
-                          : "text-gray-300 md:hover:bg-[#1a3429] md:hover:text-white"
+                          : "text-gray-300 md:hover:bg-[#181818] md:hover:text-white"
                       }`}
                       style={{
                         display: "flex", 
@@ -399,7 +399,7 @@ export default function FilterBar({
           <div className="relative">
             <button
               onClick={() => setDesktopFilterOpen(prev => prev === 'language' ? null : 'language')}
-              className="bg-[#10221B] text-white rounded-lg flex items-center"
+              className="bg-[#181818] text-white rounded-lg flex items-center"
               aria-expanded={desktopFilterOpen === 'language'}
               aria-controls="language-dropdown"
               style={{
@@ -434,7 +434,7 @@ export default function FilterBar({
               <div className="filter-dropdown" style={{ width: "175px", position: "absolute", bottom: "100%", left: 0 }}>
                 <div 
                   id="language-dropdown"
-                  className="w-full mb-2 bg-[#10221B] text-white rounded-lg shadow-lg z-30 overflow-hidden"
+                  className="w-full mb-2 bg-[#181818] text-white rounded-lg shadow-lg z-30 overflow-hidden"
                   role="dialog"
                   aria-label="Language options"
                   onClick={(e) => e.stopPropagation()}
@@ -446,7 +446,7 @@ export default function FilterBar({
                       className={`cursor-pointer text-xl font-semibold text-left uppercase flex items-center justify-between ${
                         selectedLanguage.includes(language)
                           ? "text-white"
-                          : "text-gray-300 md:hover:bg-[#1a3429] md:hover:text-white"
+                          : "text-gray-300 md:hover:bg-[#181818] md:hover:text-white"
                       }`}
                       style={{
                         display: "flex", 
@@ -479,7 +479,7 @@ export default function FilterBar({
         {/* RIGHT SIDE - Sort and Results */}
         <div className="hidden md:flex items-center gap-2">
           <div 
-            className="bg-[#10221B] rounded-[10px] flex items-center px-4"
+            className="bg-[#181818] rounded-[10px] flex items-center px-4"
             style={{
               width: "280px",
               height: "60px",
@@ -488,14 +488,14 @@ export default function FilterBar({
             }}
           >
             {/* SORT DROPDOWN */}
-            <div className="relative border border-[#203C1F] rounded-[10px]">
+            <div className="relative border border-[#222222] rounded-[10px]">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setSortOpen(!sortOpen);
                   setDesktopFilterOpen(null);
                 }}
-                className="bg-[#203C1F] text-white rounded-[10px] flex items-center justify-between px-3"
+                className="bg-[#222222] text-white rounded-[10px] flex items-center justify-between px-3"
                 style={{
                   width: "130px",
                   height: "36px"
@@ -517,7 +517,7 @@ export default function FilterBar({
               </button>
               {sortOpen && (
                 <div 
-                  className="sort-dropdown absolute bottom-full left-0 mb-4 w-[130px] bg-[#203C1F] text-white rounded-lg shadow-lg z-30"
+                  className="sort-dropdown absolute bottom-full left-0 mb-4 w-[130px] bg-[#222222] text-white rounded-lg shadow-lg z-30"
                   role="listbox"
                   aria-label="Sort options"
                 >
@@ -531,7 +531,7 @@ export default function FilterBar({
                         }}
                         className={`cursor-pointer px-3 py-1 text-xl font-semibold text-left uppercase ${
                           sortOption === option 
-                            ? "bg-[#10221B] text-white" 
+                            ? "bg-[#181818] text-white rounded-lg" 
                             : "text-gray-300"
                         }`}
                         role="option"
@@ -544,7 +544,7 @@ export default function FilterBar({
                 </div>
               )}
             </div>
-            <span className="text-[20px] font-semibold text-[#667B66] ml-4" role="status">
+            <span className="text-[20px] font-semibold text-[#FFFFFF]/50 ml-4" role="status">
               {totalResults} results
             </span>
           </div>
@@ -552,7 +552,7 @@ export default function FilterBar({
           {/* Support Button */}
           <button
             onClick={() => window.open('mailto:support@example.com')}
-            className="bg-[#10221B] text-white w-[160px] h-[60px] rounded-lg flex items-center justify-between px-4"
+            className="bg-[#181818] text-white w-[160px] h-[60px] rounded-lg flex items-center justify-between px-4"
           >
             <div className="flex items-center gap-2">
               <img

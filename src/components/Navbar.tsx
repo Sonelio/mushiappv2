@@ -21,20 +21,14 @@ const ProfileImage = ({ user }: { user: User | null }) => {
   // Default avatar component
   const DefaultAvatar = () => (
     <div className="w-14 h-14 rounded-[15px] overflow-hidden">
-      <div className="h-full w-full flex items-center justify-center bg-[#0C1813]">
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-8 w-8 text-gray-300" 
-          viewBox="0 0 20 20" 
-          fill="currentColor"
-        >
-          <path 
-            fillRule="evenodd" 
-            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" 
-            clipRule="evenodd" 
-          />
-        </svg>
-      </div>
+      <Image
+        src="/defaultprofile.png"
+        alt="Default Profile"
+        width={56}
+        height={56}
+        className="w-full h-full object-cover"
+        priority
+      />
     </div>
   );
 
@@ -102,7 +96,7 @@ export default function Navbar() {
   return (
     <div className="fixed inset-x-0 top-0 z-50">
       <div className="mx-4 my-6">
-        <nav className="bg-[#11231C] rounded-[15px] overflow-hidden">
+        <nav className="bg-[#181818] rounded-[15px] overflow-hidden">
           <div className="px-4 sm:px-6">
             <div className="flex justify-between items-center h-20">
               {/* Mobile Menu Button */}
@@ -144,7 +138,7 @@ export default function Navbar() {
                 <Link
                   href={"/templates" as Route}
                   className={`text-white text-[20px] font-bold tracking-wide px-6 py-4 rounded-md transition-colors ${
-                    isTemplatesActive ? 'bg-[#0C1813]' : 'hover:bg-[#0C1813]'
+                    isTemplatesActive ? 'bg-[#222222]' : 'hover:bg-[#222222]'
                   }`}
                 >
                   TEMPLATES
@@ -155,7 +149,7 @@ export default function Navbar() {
               <div className="hidden md:flex items-center">
                 <Link 
                   href={"/account" as Route}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-[#0C1813] transition-colors`}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-xl hover:bg-[#181818] transition-colors`}
                 >
                   <ProfileImage user={user} />
                   <div className="text-sm mr-2">
